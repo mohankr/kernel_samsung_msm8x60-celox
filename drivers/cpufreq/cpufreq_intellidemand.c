@@ -985,12 +985,12 @@ enum {
 };
 
 #define SAMPLE_DURATION_MSEC	(10*1000) // 10 secs >= 10000 msec
-#define ACTIVE_DURATION_MSEC	(3*60*1000) // 3 mins
+#define ACTIVE_DURATION_MSEC	(5*60*1000) // 5 mins
 #define INACTIVE_DURATION_MSEC	(1*60*1000) // 1 mins
 #define MAX_ACTIVE_FREQ_LIMIT	35 // %
 #define MAX_INACTIVE_FREQ_LIMIT	25 // %
-#define ACTIVE_MAX_FREQ		CONFIG_INTELLI_MAX_ACTIVE_FREQ		// 1.512GHZ
-#define INACTIVE_MAX_FREQ	CONFIG_INTELLI_MAX_INACTIVE_FREQ	// 1.134GHZ
+#define ACTIVE_MAX_FREQ		1512000	// 1.512GHZ
+#define INACTIVE_MAX_FREQ	1080000	// 1.080GHZ
 
 #define NUM_ACTIVE_LOAD_ARRAY	(ACTIVE_DURATION_MSEC/SAMPLE_DURATION_MSEC)
 #define NUM_INACTIVE_LOAD_ARRAY	(INACTIVE_DURATION_MSEC/SAMPLE_DURATION_MSEC)
@@ -1178,8 +1178,8 @@ static void do_dbs_timer(struct work_struct *work)
 					msecs_limit_total += time_int;
 					load_limit_total[load_limit_index++] = average;
 
-					//pr_warn("LMF: average = %ld.%ld, (%ld:%ld) (%ld:%ld) (%ld:%ld)\n", 
-					//	average, average_dec, time_int, time_int1, load_state_total0, load_state_total1, load_limit_index-1, msecs_limit_total);
+					pr_warn("LMF: average = %ld.%ld, (%ld:%ld) (%ld:%ld) (%ld:%ld)\n", 
+						average, average_dec, time_int, time_int1, load_state_total0, load_state_total1, load_limit_index-1, msecs_limit_total);
 
 					time_int = 0;
 					time_int1 = 0;
