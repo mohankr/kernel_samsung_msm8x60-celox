@@ -1178,8 +1178,8 @@ static void do_dbs_timer(struct work_struct *work)
 					msecs_limit_total += time_int;
 					load_limit_total[load_limit_index++] = average;
 
-					pr_warn("LMF: average = %ld.%ld, (%ld:%ld) (%ld:%ld) (%ld:%ld)\n", 
-						average, average_dec, time_int, time_int1, load_state_total0, load_state_total1, load_limit_index-1, msecs_limit_total);
+					//pr_warn("LMF: average = %ld.%ld, (%ld:%ld) (%ld:%ld) (%ld:%ld)\n", 
+					//	average, average_dec, time_int, time_int1, load_state_total0, load_state_total1, load_limit_index-1, msecs_limit_total);
 
 					time_int = 0;
 					time_int1 = 0;
