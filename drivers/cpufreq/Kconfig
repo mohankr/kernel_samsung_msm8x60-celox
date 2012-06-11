@@ -344,10 +344,18 @@ config CPU_FREQ_GOV_LAZY
 config CPU_FREQ_GOV_PEGASUSQ
 	tristate "'pegasusq' cpufreq policy governor"
 	  
-	  
+config CPU_FREQ_GOV_LULZACTIVE
+	tristate "'lulzactive' cpufreq governor"
+	depends on CPU_FREQ
+	help
+	  'lulzactive' - a new interactive governor by Tegrak!
+
+	  If in doubt, say N.
+
 config CPU_FREQ_GOV_SAMSUNG
   tristate "'samsung' cpufreq policy governor"
   select CPU_FREQ_TABLE
+
   help
     'samsung' - Samsung Implementation. This driver adds a dynamic 
     cpufreq policy governor. The governor does a periodic polling and 
