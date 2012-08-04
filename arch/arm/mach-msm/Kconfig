@@ -2374,6 +2374,12 @@ config MSM_DCVS
 	  algorithm and the algorithm returns a frequency for the core which is
 	  passed to the frequency change driver.
 
+config GPU_OVERCLOCK
+  bool "Enable GPU Overclocking option"
+  default n
+  help
+    Enable GPU overclocking.
+    
 config PMIC8058_XOADC_CAL
 	bool "PMIC8058 adc calibration"
 	help
