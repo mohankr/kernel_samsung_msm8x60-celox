@@ -44,7 +44,12 @@ enum kgsl_ctx_reset_stat {
 	KGSL_CTX_STAT_UNKNOWN_CONTEXT_RESET_EXT		= 0x00000003
 };
 
+#ifdef CONFIG_GPU_OVERCLOCK
+#define KGSL_MAX_PWRLEVELS 7
+#else
 #define KGSL_MAX_PWRLEVELS 5
+#endif /* defined(CONFIG_GPU_OVERCLOCK) */
+
 
 #define KGSL_CONVERT_TO_MBPS(val) \
 	(val*1000*1000U)
@@ -154,6 +159,9 @@ struct kgsl_version {
 struct kgsl_device_platform_data {
 	struct kgsl_pwrlevel pwrlevel[KGSL_MAX_PWRLEVELS];
 	int init_level;
+#ifdef CONFIG_GPU_OVERCLOCK
+  int max_level;
+#endif /* defined(CONFIG_GPU_OVERCLOCK) */
 	int num_levels;
 	int (*set_grp_async)(void);
 	unsigned int idle_timeout;
