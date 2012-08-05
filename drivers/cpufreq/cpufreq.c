@@ -87,8 +87,10 @@ int lock_policy_rwsem_##mode						\
 }
 
 lock_policy_rwsem(read, cpu);
+EXPORT_SYMBOL_GPL(lock_policy_rwsem_read);
 
 lock_policy_rwsem(write, cpu);
+EXPORT_SYMBOL_GPL(lock_policy_rwsem_write);
 
 static void unlock_policy_rwsem_read(int cpu)
 {
@@ -103,7 +105,7 @@ void unlock_policy_rwsem_write(int cpu)
 	BUG_ON(policy_cpu == -1);
 	up_write(&per_cpu(cpu_policy_rwsem, policy_cpu));
 }
-
+EXPORT_SYMBOL_GPL(unlock_policy_rwsem_write);
 
 /* internal prototypes */
 static int __cpufreq_governor(struct cpufreq_policy *policy,
