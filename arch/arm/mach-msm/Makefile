@@ -324,14 +324,15 @@ obj-y	+= gpio.o
 endif
 endif
 
-obj-$(CONFIG_MSM_SLEEP_STATS) += msm_rq_stats.o idle_stats.o
 obj-$(CONFIG_MSM_SLEEP_STATS_DEVICE) += idle_stats_device.o
 obj-$(CONFIG_MSM_DCVS) += msm_dcvs_scm.o msm_dcvs.o msm_dcvs_idle.o
+obj-$(CONFIG_MSM_RUN_QUEUE_STATS) += msm_rq_stats.o
 obj-$(CONFIG_MSM_SHOW_RESUME_IRQ) += msm_show_resume_irq.o
 obj-$(CONFIG_BT_MSM_PINTEST)  += btpintest.o
 obj-$(CONFIG_MSM_FAKE_BATTERY) += fish_battery.o
 obj-$(CONFIG_MSM_RPC_VIBRATOR) += msm_vibrator.o
 obj-$(CONFIG_MSM_NATIVE_RESTART) += restart.o
+obj-$(CONFIG_MSM_MODEM_RESTART) += restart_7k.o
 
 obj-$(CONFIG_MSM_PROC_COMM_REGULATOR) += proccomm-regulator.o
 ifdef CONFIG_MSM_PROC_COMM_REGULATOR
@@ -344,10 +345,15 @@ endif
 obj-$(CONFIG_ARCH_MSM8960) += mdm2.o mdm_common.o
 obj-$(CONFIG_MSM_RTB) += msm_rtb.o
 obj-$(CONFIG_MSM_CACHE_ERP) += cache_erp.o
+obj-$(CONFIG_MSM_EBI_ERP) += ebi_erp.o
 obj-$(CONFIG_MSM_CACHE_DUMP) += msm_cache_dump.o
 obj-$(CONFIG_SEC_DEBUG)		+= sec_debug.o sec_getlog.o sec_gaf.o
 
 obj-$(CONFIG_SEC_LOG_LAST_KMSG) += sec_last_log.o
+obj-$(CONFIG_MSM_HSIC_SYSMON) += hsic_sysmon.o
+obj-$(CONFIG_MSM_HSIC_SYSMON_TEST) += hsic_sysmon_test.o
+
+obj-$(CONFIG_MSM_RPM_SMD) += rpm-smd.o
 
 ifdef CONFIG_BT_BCM4330
 obj-$(CONFIG_BT_BCM4330) += board-bluetooth-bcm4330.o
