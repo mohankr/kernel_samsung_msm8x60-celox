@@ -3560,7 +3560,9 @@ static int msm_fb_ioctl(struct fb_info *info, unsigned int cmd,
 		if (ret)
 			return ret;
 
+		mutex_unlock(&mfd->entry_mutex);
 		ret = mfd->do_histogram(info, &hist);
+		goto exit;
 		break;
 
 	case MSMFB_HISTOGRAM_START:
@@ -3599,7 +3601,9 @@ static int msm_fb_ioctl(struct fb_info *info, unsigned int cmd,
 		break;
 
 	case MSMFB_NOTIFY_UPDATE:
+		mutex_unlock(&mfd->entry_mutex);
 		ret = msmfb_notify_update(info, argp);
+		goto exit;
 		break;
 
 	case MSMFB_SET_PAGE_PROTECTION:
@@ -3655,6 +3659,7 @@ static int msm_fb_ioctl(struct fb_info *info, unsigned int cmd,
 		break;
 	}
 
+exit:
 	return ret;
 }
 
