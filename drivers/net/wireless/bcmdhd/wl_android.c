@@ -21,7 +21,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- * $Id: wl_android.c 372067 2012-11-30 08:03:06Z $
+ * $Id: wl_android.c 379859 2013-01-19 13:16:55Z $
  */
 
 #include <linux/module.h>
@@ -1728,7 +1728,7 @@ int wl_android_priv_cmd(struct net_device *net, struct ifreq *ifr, int cmd)
 	/* CUSTOMER_SET_COUNTRY feature is define for only GGSM model */
 	else if (strnicmp(command, CMD_COUNTRY, strlen(CMD_COUNTRY)) == 0) {
 		char *country_code = command + strlen(CMD_COUNTRY) + 1;
-		bytes_written = wldev_set_country(net, country_code);
+		bytes_written = wldev_set_country(net, country_code, true, true);
 	}
 #endif
 #endif /* WL_CFG80211 */
