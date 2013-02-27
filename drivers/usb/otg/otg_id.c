@@ -22,7 +22,7 @@
 
 static DEFINE_MUTEX(otg_id_lock);
 static struct plist_head otg_id_plist =
-	PLIST_HEAD_INIT(otg_id_plist);
+	PLIST_HEAD_INIT(otg_id_plist, otg_id_lock);
 static struct otg_id_notifier_block *otg_id_active;
 static bool otg_id_cancelling;
 static bool otg_id_inited;

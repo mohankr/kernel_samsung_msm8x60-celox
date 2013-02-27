@@ -69,7 +69,7 @@ ENTRY(cpu_v7_reset)
         mcr     p15, 0, ip, c7, c5, 6           @ flush BTC
         dsb
         isb
-	mov     pc,r0
+	mov	pc, r0
 ENDPROC(cpu_v7_reset)
 
 /*

@@ -833,7 +833,7 @@ static int hw_breakpoint_pending(unsigned long addr, unsigned int fsr,
 	return ret;
 }
 
-static void reset_brps_reserved_reg(int n)
+sstatic void reset_brps_reserved_reg(int n)
 {
 	int i;
 

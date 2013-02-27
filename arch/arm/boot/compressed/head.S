@@ -398,7 +398,6 @@ wont_overwrite:
  */
 		orrs	r1, r0, r5
 		beq	not_relocated
-
 		add	r11, r11, r0
 		add	r12, r12, r0
 

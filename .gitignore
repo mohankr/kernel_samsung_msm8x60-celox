@@ -91,3 +91,5 @@ GTAGS
 /show-*
 /TODO
 /git_*.sh
+logs/
+obj-save/

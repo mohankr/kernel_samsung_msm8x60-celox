@@ -142,12 +142,12 @@ static void l2x0_for_each_set_way(void __iomem *reg)
 	unsigned long flags;
 
 	for (way = 0; way < l2x0_ways; way++) {
-		spin_lock_irqsave(&l2x0_lock, flags);
+	spin_lock_irqsave(&l2x0_lock, flags);
 		for (set = 0; set < l2x0_sets; set++)
 			writel_relaxed((way << 28) | (set << 5), reg);
-		cache_sync();
-		spin_unlock_irqrestore(&l2x0_lock, flags);
-	}
+	cache_sync();
+	spin_unlock_irqrestore(&l2x0_lock, flags);
+}
 }
 #endif
 

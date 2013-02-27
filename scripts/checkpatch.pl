@@ -1543,6 +1543,37 @@ sub process {
 			$rpt_cleaners = 1;
 		}
 
+# check for Kconfig help text having a real description
+# Only applies when adding the entry originally, after that we do not have
+# sufficient context to determine whether it is indeed long enough.
+		if ($realfile =~ /Kconfig/ &&
+		    $line =~ /\+\s*(?:---)?help(?:---)?$/) {
+			my $length = 0;
+			my $cnt = $realcnt;
+			my $ln = $linenr + 1;
+			my $f;
+			my $is_end = 0;
+			while ($cnt > 0 && defined $lines[$ln - 1]) {
+				$f = $lines[$ln - 1];
+				$cnt-- if ($lines[$ln - 1] !~ /^-/);
+				$is_end = $lines[$ln - 1] =~ /^\+/;
+				$ln++;
+
+				next if ($f =~ /^-/);
+				$f =~ s/^.//;
+				$f =~ s/#.*//;
+				$f =~ s/^\s+//;
+				next if ($f =~ /^$/);
+				if ($f =~ /^\s*config\s/) {
+					$is_end = 1;
+					last;
+				}
+				$length++;
+			}
+			WARN("please write a paragraph that describes the config symbol fully\n" . $herecurr) if ($is_end && $length < 4);
+			#print "is_end<$is_end> length<$length>\n";
+		}
+
 # check we are in a valid source file if not then ignore this hunk
 		next if ($realfile !~ /\.(h|c|s|S|pl|sh)$/);
 
@@ -1957,6 +1988,12 @@ sub process {
 				$herecurr);
 		}
 
+# check for static const char * arrays.
+		if ($line =~ /\bstatic\s+const\s+char\s*\*\s*(\w+)\s*\[\s*\]\s*=\s*/) {
+			WARN("static const char * array should probably be static const char * const\n" .
+				$herecurr);
+               }
+
 # check for static char foo[] = "bar" declarations.
 		if ($line =~ /\bstatic\s+char\s+(\w+)\s*\[\s*\]\s*=\s*"/) {
 			WARN("static char array declaration should probably be static const char\n" .
@@ -2327,7 +2364,7 @@ sub process {
 
 # check spacing on parentheses
 		if ($line =~ /\(\s/ && $line !~ /\(\s*(?:\\)?$/ &&
-		    $line !~ /for\s*\(\s+;/ && $line !~ /^\+\s*[A-Z_][A-Z\d_]*\(\s*\d+(\,.*)?\)\,?$/) {
+1		    $line !~ /for\s*\(\s+;/ && $line !~ /^\+\s*[A-Z_][A-Z\d_]*\(\s*\d+(\,.*)?\)\,?$/) {
 			ERROR("space prohibited after that open parenthesis '('\n" . $herecurr);
 		}
 		if ($line =~ /(\s+)\)/ && $line !~ /^.\s*\)/ &&

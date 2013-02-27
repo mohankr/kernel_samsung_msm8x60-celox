@@ -435,7 +435,7 @@ handle_fasteoi_irq(unsigned int irq, struct irq_desc *desc)
 	 */
 	if (unlikely(!desc->action || irqd_irq_disabled(&desc->irq_data))) {
 		if (!irq_settings_is_level(desc))
-			desc->istate |= IRQS_PENDING;
+		desc->istate |= IRQS_PENDING;
 		mask_irq(desc);
 		goto out;
 	}

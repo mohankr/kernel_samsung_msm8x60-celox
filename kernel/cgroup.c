@@ -2263,8 +2263,8 @@ static int attach_task_by_pid(struct cgroup *cgrp, u64 pid, bool threadgroup)
 			 */
 			ret = cgroup_allow_attach(cgrp, tsk);
 			if (ret) {
-				rcu_read_unlock();
-				cgroup_unlock();
+			rcu_read_unlock();
+			cgroup_unlock();
 				return ret;
 			}
 		}
