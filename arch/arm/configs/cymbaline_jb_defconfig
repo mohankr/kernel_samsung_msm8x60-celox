@@ -1,6 +1,6 @@
 #
 # Automatically generated make config: don't edit
-# Linux/arm 3.0.31 Kernel Configuration
+# Linux/arm 3.0.66 Kernel Configuration
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -2654,7 +2654,6 @@ CONFIG_USB_STORAGE_ONETOUCH=y
 CONFIG_USB_STORAGE_KARMA=y
 CONFIG_USB_STORAGE_CYPRESS_ATACB=y
 # CONFIG_USB_STORAGE_ENE_UB6250 is not set
-# CONFIG_USB_UAS is not set
 # CONFIG_USB_LIBUSUAL is not set
 
 #
