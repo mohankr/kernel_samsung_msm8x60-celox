@@ -56,7 +56,11 @@ struct saw_vreg {
 };
 
 /* Minimum core operating voltage */
-#define MIN_CORE_VOLTAGE		950000
+#if defined(CONFIG_MIN_VDD_SC)
+#define MIN_CORE_VOLTAGE    CONFIG_MIN_VDD_SC
+#else
+#define MIN_CORE_VOLTAGE    950000
+#endif
 
 /* Specifies the PMIC internal slew rate in uV/us. */
 #define REGULATOR_SLEW_RATE		1250

@@ -48,7 +48,18 @@
 #define L_VAL_SCPLL_CAL_MIN	0x08 /* =  432 MHz with 27MHz source */
 #define L_VAL_SCPLL_CAL_MAX	0x1C /* = 1512 MHz with 27MHz source */
 
-#define MAX_VDD_SC		1250000 /* uV */
+#if defined(CONFIG_MIN_VDD_SC)
+#define MIN_VDD_SC    CONFIG_MIN_VDD_SC
+#else
+#define MIN_VDD_SC    800000
+#endif /* CONFIG_MIN_VDD_SC */
+
+#if defined(CONFIG_MAX_VDD_SC)
+#define MAX_VDD_SC    CONFIG_MAX_VDD_SC
+#else
+#define MAX_VDD_SC    1250000 /* uV */
+#endif /* CONFIG_MAX_VDD_SC */
+
 #define MAX_VDD_MEM		1250000 /* uV */
 #define MAX_VDD_DIG		1200000 /* uV */
 #define MAX_AXI			 310500 /* KHz */
@@ -959,3 +970,49 @@ static int __init acpuclk_8x60_init(struct acpuclk_soc_data *soc_data)
 struct acpuclk_soc_data acpuclk_8x60_soc_data __initdata = {
 	.init = acpuclk_8x60_init,
 };
+
+#if defined(CONFIG_SYSFS_ACPU_VDD_SC_TABLE)
+ssize_t acpuclk_get_vdd_levels_str(char *buf) {
+
+  int i, len = 0;
+
+  if (buf) {
+    mutex_lock(&drv_state.lock);
+
+    for (i = 0; acpu_freq_tbl[i].acpuclk_khz; i++) {
+      /* updated to use uv required by 8x60 architecture - faux123 */
+      len += sprintf(buf + len, "%8u: %8d\n", acpu_freq_tbl[i].acpuclk_khz, acpu_freq_tbl[i].vdd_sc );
+    }
+
+    mutex_unlock(&drv_state.lock);
+  }
+  return len;
+}
+
+/* updated to use uv required by 8x60 architecture - faux123 */
+void acpuclk_set_vdd(unsigned int khz, int vdd_uv) {
+
+  int i;
+  unsigned int new_vdd_uv;
+//  int vdd_uv;
+
+//  vdd_uv = vdd_mv * 1000;
+
+  mutex_lock(&drv_state.lock);
+
+  for (i = 0; acpu_freq_tbl[i].acpuclk_khz; i++) {
+    if (khz == 0)
+      new_vdd_uv = min(
+        max((acpu_freq_tbl[i].vdd_sc + vdd_uv), (unsigned int) MIN_VDD_SC), 
+        (unsigned int)MAX_VDD_SC);
+    else if ( acpu_freq_tbl[i].acpuclk_khz == khz)
+      new_vdd_uv = min(max((unsigned int)vdd_uv, (unsigned int)MIN_VDD_SC), (unsigned int)MAX_VDD_SC);
+    else 
+      continue;
+
+    acpu_freq_tbl[i].vdd_sc = new_vdd_uv;
+  }
+
+  mutex_unlock(&drv_state.lock);
+}
+#endif /* CONFIG_SYSFS_ACPU_VDD_SC_TABLE */

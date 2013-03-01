@@ -14,8 +14,18 @@
 #ifndef AVS_H
 #define AVS_H
 
+#if defined(CONFIG_MIN_VDD_SC)
+#define VOLTAGE_MIN  ( (CONFIG_MIN_VDD_SC) / 1000 )
+#else
 #define VOLTAGE_MIN  1000 /* mV */
+#endif /* CONFIG_MIN_VDD_SC */
+
+#if defined(CONFIG_MAX_VDD_SC)
+#define VOLTAGE_MAX  ( (CONFIG_MAX_VDD_SC) / 1000 )
+#else
 #define VOLTAGE_MAX  1250
+#endif /* CONFIG_MAX_VDD_SC */
+
 #define VOLTAGE_STEP 25
 
 int __init avs_init(int (*set_vdd)(int), u32 freq_cnt, u32 freq_idx);

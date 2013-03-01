@@ -1372,6 +1372,29 @@ config MSM_CPU_FREQ_MIN
 
 endif # CPU_FREQ_MSM
 
+config SYSFS_ACPU_VDD_SC_TABLE
+  bool "Enable sysfs interface for VDD_SC voltage"
+  default n
+  help
+    faux123 sysfs interface for vdd_sc voltage scaling.
+
+config MIN_VDD_SC
+  int "VDD_SC minimum voltage"
+  depends on SYSFS_ACPU_VDD_SC_TABLE
+  default 800000
+  help
+    Minimum VDD_SC value. Default for SGH-i727 is 800000. It is suggested
+    to not go lower than 700000.
+
+config MAX_VDD_SC
+  int "VDD_SC maximum voltage"
+  depends on SYSFS_ACPU_VDD_SC_TABLE
+  default 1250000
+  help
+    Maximum VDD_SC value. Default for SGH-i727 is 1250000. It is suggested
+    to not go higher than 1350000.
+
+
 config MSM_CPU_AVS
 	bool "Enable software controlled Adaptive Voltage Scaling (AVS)"
 	depends on (ARCH_MSM_SCORPION && QSD_SVS)
