@@ -46,7 +46,11 @@
  * The PLL hardware is capable of 384MHz to 1536MHz. The L_VALs
  * used for calibration should respect these limits. */
 #define L_VAL_SCPLL_CAL_MIN	0x08 /* =  432 MHz with 27MHz source */
-#define L_VAL_SCPLL_CAL_MAX	0x1C /* = 1512 MHz with 27MHz source */
+#if defined(CONFIG_ACPU_OVERCLOCK)
+#define L_VAL_SCPLL_CAL_MAX   0x23      /* = 1890 MHz with 27MHz source */
+#else
+#define L_VAL_SCPLL_CAL_MAX   0x1C      /* = 1512 MHz with 27MHz source */
+#endif /* defined(CONFIG_ACPU_OVERCLOCK) */
 
 #if defined(CONFIG_MIN_VDD_SC)
 #define MIN_VDD_SC    CONFIG_MIN_VDD_SC
@@ -258,6 +262,9 @@ static struct clkctl_acpu_speed acpu_freq_tbl_slow[] = {
   { {1, 1}, 1404000,  ACPU_SCPLL, 0, 0, 1, 0x1A, L2(19), 1175000, 0x03006000},
   { {1, 1}, 1458000,  ACPU_SCPLL, 0, 0, 1, 0x1B, L2(19), 1200000, 0x03006000},
   { {1, 1}, 1512000,  ACPU_SCPLL, 0, 0, 1, 0x1C, L2(19), 1225000, 0x03006000},
+#if defined(CONFIG_ACPU_OVERCLOCK)
+  { {1, 1}, 1566000,  ACPU_SCPLL, 0, 0, 1, 0x1D, L2(19), 1230000, 0x03006000},
+#endif   /* defined(CONFIG_ACPU_OVERCLOCK) */
   { {0, 0}, 0 },
 };
 
@@ -890,6 +897,10 @@ static unsigned int __init select_freq_plan(void)
 
 	if (speed_bin == 0x1) {
 		max_khz = 1512000;
+//Only support skyrocket for now...
+#if defined(CONFIG_ACPU_OVERCLOCK) && defined(CONFIG_MAX_CPU_FREQ_CUTOFF)
+    max_khz = CONFIG_MAX_CPU_FREQ_CUTOFF;
+#endif /* CONFIG_ACPU_OVERCLOCK */    
 		pvs = (pte_efuse >> 10) & 0x7;
 		if (pvs == 0x7)
 			pvs = (pte_efuse >> 13) & 0x7;
@@ -898,7 +909,11 @@ static unsigned int __init select_freq_plan(void)
 		case 0x0:
 		case 0x7:
 			acpu_freq_tbl = acpu_freq_tbl_slow;
+#if defined(CONFIG_ACPU_OVERCLOCK)
+      pr_info("ACPU PVS: Slow (overclockable)\n");
+#else
 			pr_info("ACPU PVS: Slow\n");
+#endif      
 			break;
 		case 0x1:
 			acpu_freq_tbl = acpu_freq_tbl_nom;
@@ -957,8 +972,14 @@ static int __init acpuclk_8x60_init(struct acpuclk_soc_data *soc_data)
 	bus_init();
 
 	/* Improve boot time by ramping up CPUs immediately. */
-	for_each_online_cpu(cpu)
+	for_each_online_cpu(cpu) {
+#if defined(CONFIG_MAX_BOOT_FREQ)
+    pr_info("[ACPU] Setting Max boot cpu: %u KHz\n", CONFIG_MAX_BOOT_FREQ);
+    acpuclk_8x60_set_rate(cpu, CONFIG_MAX_BOOT_FREQ, SETRATE_INIT);
+#else    
 		acpuclk_8x60_set_rate(cpu, max_cpu_khz, SETRATE_INIT);
+#endif
+  }
 
 	acpuclk_register(&acpuclk_8x60_data);
 	cpufreq_table_init();

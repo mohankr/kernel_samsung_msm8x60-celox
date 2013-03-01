@@ -1379,6 +1379,28 @@ config CPU_FREQ_DEBUG
    Enable this option to looking into CPU frequency set/gets. Note: this
    can be very verbose.
    
+config ACPU_OVERCLOCK
+  bool "Enable CPU overclocking"
+  default n
+  help
+    Enable CPU overclocking.
+    
+config MAX_CPU_FREQ_CUTOFF
+  int "This is the maximum CPU frequency allowed."
+  depends on ACPU_OVERCLOCK
+  default 1566000
+  help
+    The maximum allowed CPU frequency allowed. This is mainly used to truncate
+    the CPU frequency table
+    
+config MAX_BOOT_FREQ
+  int "Max Boot CPU Frequency, when overclocking"
+  depends on ACPU_OVERCLOCK
+  default 1512000
+  help
+    Note, it is advisable to set this when overclocking is enabled. It is also
+    used in cpufreq drivers.
+   
 config SYSFS_ACPU_VDD_SC_TABLE
   bool "Enable sysfs interface for VDD_SC voltage"
   default n
