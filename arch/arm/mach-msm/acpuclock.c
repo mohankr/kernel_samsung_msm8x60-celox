@@ -25,6 +25,10 @@ unsigned long acpuclk_get_rate(int cpu)
 
 int acpuclk_set_rate(int cpu, unsigned long rate, enum setrate_reason reason)
 {
+#ifdef CONFIG_CPU_FREQ_DEBUG
+   pr_info("acpuclock:[%s] [set_rate] cpu=[%u], rate=[%ld] reason=[%d]\n",
+       __func__, cpu, rate, reason);
+#endif /* defined(CONFIG_CPU_FREQ_DEBUG) */
 	if (!acpuclk_data->set_rate)
 		return 0;
 

@@ -1372,6 +1372,13 @@ config MSM_CPU_FREQ_MIN
 
 endif # CPU_FREQ_MSM
 
+config CPU_FREQ_DEBUG
+ bool "Enable verbose output for CPU frequency debugging"
+ default n
+ help
+   Enable this option to looking into CPU frequency set/gets. Note: this
+   can be very verbose.
+   
 config SYSFS_ACPU_VDD_SC_TABLE
   bool "Enable sysfs interface for VDD_SC voltage"
   default n

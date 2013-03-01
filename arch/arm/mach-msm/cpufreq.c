@@ -249,6 +249,12 @@ static int __cpuinit msm_cpufreq_init(struct cpufreq_policy *policy)
 #endif
 
 	cur_freq = acpuclk_get_rate(policy->cpu);
+#ifdef CONFIG_CPU_FREQ_DEBUG
+   pr_info("cpufreq (msm) [%s] cpu=[%u], cur_freq=[%u], cpuinfo.min_freq=[%u], cpuinfo.max_freq=[%u], policy->min=[%u], policy->max=[%u]\n",
+           __func__, policy->cpu, cur_freq, policy->cpuinfo.min_freq,
+           policy->cpuinfo.max_freq, policy->min, policy->max);
+#endif /* defined(CONFIG_CPU_FREQ_DEBUG) */
+  
 	if (cpufreq_frequency_table_target(policy, table, cur_freq,
 	    CPUFREQ_RELATION_H, &index) &&
 	    cpufreq_frequency_table_target(policy, table, cur_freq,
