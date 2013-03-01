@@ -593,6 +593,18 @@ static ssize_t show_bios_limit(struct cpufreq_policy *policy, char *buf)
 
 #ifdef CONFIG_SYSFS_ACPU_VDD_SC_TABLE
 
+/* CONFIG_MIN_VDD_SC is always available when table is turned on */
+static ssize_t show_vdd_sc_min(struct kobject *a, struct attribute *b, char *buf) 
+{
+  return scnprintf(buf, PAGE_SIZE, "%u\n", CONFIG_MIN_VDD_SC);
+}
+
+/* CONFIG_MAX_VDD_SC is always available when table is turned on */
+static ssize_t show_vdd_sc_max(struct kobject *a, struct attribute *b, char *buf) 
+{
+  return scnprintf(buf, PAGE_SIZE, "%u\n", CONFIG_MAX_VDD_SC);
+}
+
 extern ssize_t acpuclk_get_vdd_levels_str(char *buf);
 extern void acpuclk_set_vdd(unsigned acpu_khz, int vdd);
 
@@ -670,6 +682,8 @@ cpufreq_freq_attr_rw(scaling_setspeed);
 
 #ifdef CONFIG_SYSFS_ACPU_VDD_SC_TABLE
 define_one_global_rw(vdd_levels);
+define_one_global_ro(vdd_sc_min);
+define_one_global_ro(vdd_sc_max);
 #endif /* CONFIG_SYSFS_ACPU_VDD_SC_TABLE */
 
 static struct attribute *default_attrs[] = {
@@ -690,6 +704,8 @@ static struct attribute *default_attrs[] = {
 #ifdef CONFIG_SYSFS_ACPU_VDD_SC_TABLE
 static struct attribute *vddtbl_attrs[] = {
   &vdd_levels.attr,
+  &vdd_sc_min.attr,
+  &vdd_sc_max.attr,
   NULL
 };
 
