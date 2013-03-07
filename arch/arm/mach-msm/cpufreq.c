@@ -43,6 +43,10 @@ static DEFINE_PER_CPU(struct cpufreq_work_struct, cpufreq_work);
 static struct workqueue_struct *msm_cpufreq_wq;
 #endif
 
+#if defined(CONFIG_ACPU_OVERCLOCK)
+static int cpu_first_init[NR_CPUS];
+#endif /* defined(CONFIG_ACPU_OVERCLOCK) */
+
 struct cpufreq_suspend_t {
 	struct mutex suspend_mutex;
 	int device_suspended;
@@ -137,6 +141,11 @@ static void set_cpu_work(struct work_struct *work)
 {
 	struct cpufreq_work_struct *cpu_work =
 		container_of(work, struct cpufreq_work_struct, work);
+    
+#ifdef CONFIG_CPU_FREQ_DEBUG
+  pr_info("cpufreq (msm): [%s] cur cpu: [%d], cpu_work->frequency: [%d]\n",
+    __func__, cpu_work->policy->cur, cpu_work->frequency);
+#endif
 
 	cpu_work->status = set_cpu_freq(cpu_work->policy, cpu_work->frequency);
 	complete(&cpu_work->complete);
@@ -181,7 +190,7 @@ static int msm_cpufreq_target(struct cpufreq_policy *policy,
 	}
 
 #ifdef CONFIG_CPU_FREQ_DEBUG
-	pr_debug("CPU[%d] target %d relation %d (%d-%d) selected %d\n",
+	pr_info("cpufreq (msm): CPU[%d] target %d relation %d (%d-%d) selected %d\n",
 		policy->cpu, target_freq, relation,
 		policy->min, policy->max, table[index].frequency);
 #endif
@@ -189,12 +198,28 @@ static int msm_cpufreq_target(struct cpufreq_policy *policy,
 #ifdef CONFIG_SMP
 	cpu_work = &per_cpu(cpufreq_work, policy->cpu);
 	cpu_work->policy = policy;
-	cpu_work->frequency = table[index].frequency;
+#if defined(CONFIG_ACPU_OVERCLOCK)
+    if (cpu_first_init[policy->cpu] < 2) { //gets called twice!!
+      pr_info("cpufreq (msm_cpufreq_target): FIRST BOOT cpu%d setting freq target to: %d, new target was: %d\n",
+        policy->cpu, CONFIG_MAX_BOOT_FREQ, table[index].frequency);
+      cpu_first_init[policy->cpu] = cpu_first_init[policy->cpu] + 1;
+      cpu_work->frequency = CONFIG_MAX_BOOT_FREQ;
+    } else {
+      cpu_work->frequency = table[index].frequency;
+    }
+#else
+  cpu_work->frequency = table[index].frequency;
+#endif /* defined(CONFIG_ACPU_OVERCLOCK) */
+  
 	cpu_work->status = -ENODEV;
 
 	cpumask_clear(mask);
 	cpumask_set_cpu(policy->cpu, mask);
 	if (cpumask_equal(mask, &current->cpus_allowed)) {
+#ifdef CONFIG_CPU_FREQ_DEBUG
+  pr_info("cpufreq (msm_cpufreq_target): [%s] cur cpu: [%d], cpu_work->frequency: [%d]\n",
+    __func__, cpu_work->policy->cur, cpu_work->frequency);
+#endif
 		ret = set_cpu_freq(cpu_work->policy, cpu_work->frequency);
 		goto done;
 	} else {
@@ -250,7 +275,7 @@ static int __cpuinit msm_cpufreq_init(struct cpufreq_policy *policy)
 
 	cur_freq = acpuclk_get_rate(policy->cpu);
 #ifdef CONFIG_CPU_FREQ_DEBUG
-   pr_info("cpufreq (msm) [%s] cpu=[%u], cur_freq=[%u], cpuinfo.min_freq=[%u], cpuinfo.max_freq=[%u], policy->min=[%u], policy->max=[%u]\n",
+   pr_info("cpufreq (msm_cpufreq_init) [%s] cpu=[%u], cur_freq=[%u], cpuinfo.min_freq=[%u], cpuinfo.max_freq=[%u], policy->min=[%u], policy->max=[%u]\n",
            __func__, policy->cpu, cur_freq, policy->cpuinfo.min_freq,
            policy->cpuinfo.max_freq, policy->min, policy->max);
 #endif /* defined(CONFIG_CPU_FREQ_DEBUG) */
@@ -266,8 +291,10 @@ static int __cpuinit msm_cpufreq_init(struct cpufreq_policy *policy)
 
 	if (cur_freq != table[index].frequency) {
 		int ret = 0;
-		ret = acpuclk_set_rate(policy->cpu, table[index].frequency,
-				SETRATE_CPUFREQ);
+    pr_info("cpufreq (msm_cpufreq_init): cpu%d setting freq target to: %d\n",
+        policy->cpu, table[index].frequency);    
+    ret = acpuclk_set_rate(policy->cpu, table[index].frequency,
+        SETRATE_CPUFREQ);
 		if (ret)
 			return ret;
 		pr_info("cpufreq: cpu%d init at %d switching to %d\n",
@@ -276,6 +303,10 @@ static int __cpuinit msm_cpufreq_init(struct cpufreq_policy *policy)
 	}
 
 	policy->cur = cur_freq;
+#ifdef CONFIG_CPU_FREQ_DEBUG
+   pr_info("cpufreq (msm_cpufreq_init) cpu=[%u], cur_freq=[%u]\n",
+           policy->cpu, cur_freq);
+#endif /* defined(CONFIG_CPU_FREQ_DEBUG) */
 
 	policy->cpuinfo.transition_latency =
 		acpuclk_get_switch_time() * NSEC_PER_USEC;
@@ -367,6 +398,9 @@ static struct notifier_block msm_cpufreq_pm_notifier = {
 
 static int __init msm_cpufreq_register(void)
 {
+#if defined(CONFIG_ACPU_OVERCLOCK)
+  int i;
+#endif /* defined(CONFIG_ACPU_OVERCLOCK) */
 	int cpu;
 
 	int err = sysfs_create_file(&cpu_sysdev_class.kset.kobj,
@@ -382,6 +416,11 @@ static int __init msm_cpufreq_register(void)
 #ifdef CONFIG_SMP
 	msm_cpufreq_wq = create_workqueue("msm-cpufreq");
 #endif
+#if defined(CONFIG_ACPU_OVERCLOCK)
+  for (i = 0; i < NR_CPUS; i++) {
+    cpu_first_init[i] = 0;
+  }
+#endif /* defined(CONFIG_ACPU_OVERCLOCK) */
 
 	register_pm_notifier(&msm_cpufreq_pm_notifier);
 	return cpufreq_register_driver(&msm_cpufreq_driver);
