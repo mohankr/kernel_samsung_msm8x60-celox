@@ -1388,7 +1388,7 @@ config ACPU_OVERCLOCK
 config MAX_CPU_FREQ_CUTOFF
   int "This is the maximum CPU frequency allowed."
   depends on ACPU_OVERCLOCK
-  default 1566000
+  default 1836000
   help
     The maximum allowed CPU frequency allowed. This is mainly used to truncate
     the CPU frequency table
@@ -1400,7 +1400,25 @@ config MAX_BOOT_FREQ
   help
     Note, it is advisable to set this when overclocking is enabled. It is also
     used in cpufreq drivers.
-   
+    
+config MAX_VDD_MEM
+  int "VDD_MEM (L2) maximum voltage"
+  depends on ACPU_OVERCLOCK
+  default 1250000
+  help
+    Maximum VDD_DIG value. Default for SGH-i727 is 1250000. It is suggested
+    to not go higher than 1350000. Some overclocked frequencies need to run
+    at higher voltages than the default.
+      
+config MAX_VDD_DIG
+  int "VDD_DIG (L2) maximum voltage"
+  depends on ACPU_OVERCLOCK
+  default 1200000
+  help
+    Maximum VDD_DIG value. Default for SGH-i727 is 1200000. It is suggested
+    to not go higher than 1350000. Some overclocked frequencies need to run
+    at higher voltages than the default.
+    
 config SYSFS_ACPU_VDD_SC_TABLE
   bool "Enable sysfs interface for VDD_SC voltage"
   default n

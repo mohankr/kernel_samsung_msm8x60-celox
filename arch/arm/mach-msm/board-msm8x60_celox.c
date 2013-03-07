@@ -8083,8 +8083,16 @@ static struct regulator_consumer_supply vreg_consumers_PM8901_S4_PC[] = {
 /* RPM early regulator constraints */
 static struct rpm_regulator_init_data rpm_regulator_early_init_data[] = {
 	/*	 ID       a_on pd ss min_uV   max_uV   init_ip    freq */
-	RPM_SMPS(PM8058_S0, 0, 1, 1,  500000, 1250000, SMPS_HMIN, 1p60),
-	RPM_SMPS(PM8058_S1, 0, 1, 1,  500000, 1250000, SMPS_HMIN, 1p60),
+#if defined(CONFIG_MAX_VDD_MEM)  
+	RPM_SMPS(PM8058_S0, 0, 1, 1,  500000, CONFIG_MAX_VDD_MEM, SMPS_HMIN, 1p60),
+#else
+  RPM_SMPS(PM8058_S0, 0, 1, 1,  500000, 1250000, SMPS_HMIN, 1p60),
+#endif	/* defined(CONFIG_MAX_VDD_MEM) */
+#if defined(CONFIG_MAX_VDD_DIG)  
+	RPM_SMPS(PM8058_S1, 0, 1, 1,  500000, CONFIG_MAX_VDD_DIG, SMPS_HMIN, 1p60),
+#else
+  RPM_SMPS(PM8058_S1, 0, 1, 1,  500000, 1250000, SMPS_HMIN, 1p60),
+#endif
 };
 
 /* RPM regulator constraints */

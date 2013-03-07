@@ -64,8 +64,18 @@
 #define MAX_VDD_SC    1250000 /* uV */
 #endif /* CONFIG_MAX_VDD_SC */
 
-#define MAX_VDD_MEM		1250000 /* uV */
-#define MAX_VDD_DIG		1200000 /* uV */
+#if defined(CONFIG_MAX_VDD_MEM)  
+#define MAX_VDD_MEM   CONFIG_MAX_VDD_MEM /* uV */
+#else
+#define MAX_VDD_MEM   1250000 /* uV */
+#endif /* defined(CONFIG_MAX_VDD_MEM) */
+
+#if defined(CONFIG_MAX_VDD_DIG)
+#define MAX_VDD_DIG   CONFIG_MAX_VDD_DIG /* uV */
+#else
+#define MAX_VDD_DIG   1200000 /* uV */
+#endif /* defined(CONFIG_MAX_VDD_DIG) */
+
 #define MAX_AXI			 310500 /* KHz */
 #define SCPLL_LOW_VDD_FMAX	 594000 /* KHz */
 #define SCPLL_LOW_VDD		1000000 /* uV */
@@ -175,6 +185,10 @@ static struct msm_bus_paths bw_level_tbl[] = {
 	[1] = BW_MBPS(1336), /* At least 167 MHz on bus. */
 	[2] = BW_MBPS(2008), /* At least 251 MHz on bus. */
 	[3] = BW_MBPS(2480), /* At least 310 MHz on bus. */
+#if defined(CONFIG_ACPU_OVERCLOCK)
+  [4] = BW_MBPS(3200), /* At least 400 MHz on bus. */
+  [5] = BW_MBPS(3464), /* At least 433 MHz on bus. */
+#endif /* defined(CONFIG_ACPU_OVERCLOCK) */
 };
 
 static struct msm_bus_scale_pdata bus_client_pdata = {
@@ -208,6 +222,13 @@ static struct clkctl_l2_speed l2_freq_tbl_v2[] = {
 	[17] = {1296000,  1, 0x18, 1200000, 1225000, 3},
 	[18] = {1350000,  1, 0x19, 1200000, 1225000, 3},
 	[19] = {1404000,  1, 0x1A, 1200000, 1250000, 3},
+#if defined(CONFIG_ACPU_OVERCLOCK)
+  [20] = {1620000,  1, 0x1E, 1250000, 1275000, 4},
+  [21] = {1674000,  1, 0x1F, 1275000, 1300000, 4},
+  [22] = {1728000,  1, 0x20, 1300000, 1312500, 5},
+  [23] = {1782000,  1, 0x21, 1312500, 1325000, 5},
+  [24] = {1836000,  1, 0x22, 1312500, 1325000, 5},
+#endif /* defined(CONFIG_ACPU_OVERCLOCK) */
 };
 
 #define L2(x) (&l2_freq_tbl_v2[(x)])
@@ -263,7 +284,12 @@ static struct clkctl_acpu_speed acpu_freq_tbl_slow[] = {
   { {1, 1}, 1458000,  ACPU_SCPLL, 0, 0, 1, 0x1B, L2(19), 1200000, 0x03006000},
   { {1, 1}, 1512000,  ACPU_SCPLL, 0, 0, 1, 0x1C, L2(19), 1225000, 0x03006000},
 #if defined(CONFIG_ACPU_OVERCLOCK)
-  { {1, 1}, 1566000,  ACPU_SCPLL, 0, 0, 1, 0x1D, L2(19), 1230000, 0x03006000},
+  { {1, 1}, 1566000,  ACPU_SCPLL, 0, 0, 1, 0x1D, L2(19), 1250000, 0x03006000},
+  { {1, 1}, 1620000,  ACPU_SCPLL, 0, 0, 1, 0x1E, L2(19), 1250000, 0x03006000},
+  { {1, 1}, 1674000,  ACPU_SCPLL, 0, 0, 1, 0x1F, L2(20), 1275000, 0x03006000},
+  { {1, 1}, 1728000,  ACPU_SCPLL, 0, 0, 1, 0x20, L2(20), 1275000, 0x03006000},
+  { {1, 1}, 1782000,  ACPU_SCPLL, 0, 0, 1, 0x21, L2(20), 1300000, 0x03006000},
+  { {1, 1}, 1836000,  ACPU_SCPLL, 0, 0, 1, 0x22, L2(20), 1300000, 0x03006000},
 #endif   /* defined(CONFIG_ACPU_OVERCLOCK) */
   { {0, 0}, 0 },
 };
