@@ -93,3 +93,5 @@ GTAGS
 /git_*.sh
 logs/
 obj-save/
+/README.BFQ
+/COPYING.BFQ
