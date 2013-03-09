@@ -53,7 +53,6 @@
 #define KGSL_IS_PAGE_ALIGNED(addr) (!((addr) & (~PAGE_MASK)))
 
 struct kgsl_device;
-struct kgsl_event;
 struct platform_device;
 struct kgsl_device_private;
 struct kgsl_context;
