@@ -358,7 +358,6 @@ static ssize_t show_powersave_bias
 	return snprintf(buf, PAGE_SIZE, "%d\n", dbs_tuners_ins.powersave_bias);
 }
 
-#if 0 /* unused */
 /**
  * update_sampling_rate - update sampling rate effective immediately if needed.
  * @new_rate: new sampling rate
@@ -414,7 +413,6 @@ static void update_sampling_rate(unsigned int new_rate)
 		mutex_unlock(&dbs_info->timer_mutex);
 	}
 }
-#endif /* 0 unused */
 
 static ssize_t store_sampling_rate(struct kobject *a, struct attribute *b,
 				   const char *buf, size_t count)
