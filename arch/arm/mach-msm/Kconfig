@@ -1391,7 +1391,15 @@ config MAX_CPU_FREQ_CUTOFF
   default 1836000
   help
     The maximum allowed CPU frequency allowed. This is mainly used to truncate
-    the CPU frequency table
+    the CPU frequency table and when SEC_DVFS is enabled and used.
+    
+config MIN_CPU_FREQ_CUTOFF
+  int "This is the minimum frequency allowed"
+  depends on ACPU_OVERCLOCK
+  default 384000
+  help
+    The minimum CPU freqency allowed. Note: this is also used when sammy limiter
+    (SEC_DVFS) is enabled. The frequency table allows one to go down to 192000.
     
 config MAX_BOOT_FREQ
   int "Max Boot CPU Frequency, when overclocking"
