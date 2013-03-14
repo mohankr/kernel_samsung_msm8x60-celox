@@ -352,3 +352,5 @@ obj-$(CONFIG_SEC_LOG_LAST_KMSG) += sec_last_log.o
 ifdef CONFIG_BT_BCM4330
 obj-$(CONFIG_BT_BCM4330) += board-bluetooth-bcm4330.o
 endif
+
+obj-$(CONFIG_FORCE_FAST_CHARGE) += fastchg.o

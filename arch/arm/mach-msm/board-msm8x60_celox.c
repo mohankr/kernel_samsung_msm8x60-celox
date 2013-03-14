@@ -167,6 +167,10 @@
 #endif
 #include <linux/switch.h>
 
+#ifdef CONFIG_FORCE_FAST_CHARGE
+#include <linux/fastchg.h>
+#endif
+
 #ifdef CONFIG_PN544_NFC
 #include <linux/nfc/pn544.h>
 #endif 
@@ -4712,7 +4716,7 @@ static void fsa9480_usb_cb(bool attached)
 
 	struct power_supply *psy = power_supply_get_by_name("battery");
 	struct usb_gadget *gadget = platform_get_drvdata(&msm_device_gadget_peripheral);
-	printk(KERN_ERR "fsa9480_usb_cb attached %d\n", attached);
+	printk(KERN_ERR "fsa9480_usb_cb attached=[%d]\n", attached);
 
 	if(!psy) {
 		pr_err("%s: fail to get battery ps\n", __func__);
@@ -4734,7 +4738,7 @@ static void fsa9480_usb_cb(bool attached)
 
 	device_attached = attached ? DEV_TYPE_USB : DEV_TYPE_NONE;
 	set_cable_status = attached ? CABLE_TYPE_USB : CABLE_TYPE_NONE;
-
+  
 #ifdef CONFIG_BATTERY_MSM8X60
 	if (set_cable_status == CABLE_TYPE_USB)
 		msm_charger_vbus_draw(450);
@@ -4742,9 +4746,26 @@ static void fsa9480_usb_cb(bool attached)
 
 #ifdef CONFIG_BATTERY_SEC
 	switch(set_cable_status) {
+#ifdef CONFIG_FORCE_FAST_CHARGE
+    case CABLE_TYPE_USB:
+      if ((force_fast_charge == FAST_CHARGE_FORCE_AC) && (set_cable_status == CABLE_TYPE_USB)) {
+        set_cable_status = attached ? CABLE_TYPE_AC : CABLE_TYPE_NONE;
+        is_fast_charge_forced = FAST_CHARGE_FORCED;
+        current_charge_mode = CURRENT_CHARGE_MODE_AC;
+        value.intval = POWER_SUPPLY_TYPE_MAINS;
+        printk(KERN_ERR "fsa9480_usb_cb fast charge forced to AC\n");
+      } else {
+        is_fast_charge_forced = FAST_CHARGE_NOT_FORCED;
+        current_charge_mode = CURRENT_CHARGE_MODE_USB;
+        printk(KERN_ERR "fsa9480_usb_cb fast charge NOT forced to AC\n");
+        value.intval = POWER_SUPPLY_TYPE_USB;
+      }
+      break;
+#else      
 		case CABLE_TYPE_USB:
 			value.intval = POWER_SUPPLY_TYPE_USB;
 			break;
+#endif /* CONFIG_FORCE_FAST_CHARGE */
 		case CABLE_TYPE_NONE:
 			value.intval = POWER_SUPPLY_TYPE_BATTERY;
 			break;
