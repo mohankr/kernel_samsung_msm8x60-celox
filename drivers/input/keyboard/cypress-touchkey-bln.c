@@ -757,76 +757,63 @@ static int i2c_touchkey_probe(struct i2c_client *client, const struct i2c_device
 
 static void init_hw(void)
 {
-  int rc;
-  struct pm8058_gpio_cfg {
-    int                gpio;
-    struct pm_gpio cfg;
-  };
+	int rc;
+	struct pm8058_gpio_cfg {
+		int            gpio;
+		struct pm_gpio cfg;
+	};
 
-  struct pm8058_gpio_cfg touchkey_int_cfg =
-  {
-    13,
-    {
-      .direction      = PM_GPIO_DIR_IN,
-      .pull           = PM_GPIO_PULL_NO,//PM_GPIO_PULL_NO,
-      .vin_sel        = 2,
-      .function       = PM_GPIO_FUNC_NORMAL,
-      .inv_int_pol    = 0,
-    },
-  };
+#if defined (CONFIG_USA_MODEL_SGH_I727) || defined (CONFIG_USA_MODEL_SGH_T989) || defined (CONFIG_USA_MODEL_SGH_T769)
 
-  #if defined(CONFIG_KOR_MODEL_SHV_E160L)
-    msleep(200);
-  #endif
+	struct pm8058_gpio_cfg touchkey_int_cfg = 
+	{
+	  PM8058_GPIO_PM_TO_SYS(12), // id-1		
+		{
+			.direction      = PM_GPIO_DIR_IN,
+			.pull           = PM_GPIO_PULL_NO,//PM_GPIO_PULL_NO,
+			.vin_sel        = 2,
+			.function       = PM_GPIO_FUNC_NORMAL,
+			.inv_int_pol    = 0,
+		},
+	};
+#else
+	struct pm8058_gpio_cfg touchkey_int_cfg = 
+	{
+		13,
+		{
+			.direction		= PM_GPIO_DIR_IN,
+			.pull			= PM_GPIO_PULL_NO,//PM_GPIO_PULL_NO,
+			.vin_sel		= 2,
+			.function		= PM_GPIO_FUNC_NORMAL,
+			.inv_int_pol	= 0,
+		},
+	};
+#endif
 
-  rc = pm8xxx_gpio_config(touchkey_int_cfg.gpio, &touchkey_int_cfg.cfg);
-  if (rc < 0) {
-    pr_err("%s pmic gpio config failed\n", __func__);
-    return;
-  }
+	rc = pm8xxx_gpio_config(touchkey_int_cfg.gpio, &touchkey_int_cfg.cfg);
+	if (rc < 0) {
+		pr_err("%s pmic gpio config failed\n", __func__);
+		return;
+	}
+	
+#if defined (CONFIG_USA_MODEL_SGH_I727)
+	if (get_hw_rev() >= 0x0a){
+		irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_EDGE_RISING);	
+	} else { 
+		irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_EDGE_FALLING);
+	}
+#elif defined (CONFIG_USA_MODEL_SGH_I717) || defined(CONFIG_USA_MODEL_SGH_I577) || defined(CONFIG_CAN_MODEL_SGH_I577R)
 
-#if defined (CONFIG_KOR_MODEL_SHV_E110S)
-  if (get_hw_rev() >= 0x06){
-    irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_EDGE_RISING);
-  } else {
-    irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_EDGE_FALLING);
-  }
-#elif defined (CONFIG_JPN_MODEL_SC_03D)
-  if (get_hw_rev() >= 0x05){
-    irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_EDGE_RISING);
-  } else {
-    irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_EDGE_FALLING);
-  }
-#elif defined(CONFIG_USA_MODEL_SGH_I577) || defined(CONFIG_CAN_MODEL_SGH_I577R)
-
-    irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_EDGE_FALLING);
-
-#elif defined (CONFIG_EUR_MODEL_GT_I9210)
-  if (get_hw_rev() >= 0x07){
-    irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_EDGE_RISING);
-  } else {
-    irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_EDGE_FALLING);
-  }
-#elif defined (CONFIG_USA_MODEL_SGH_I727)
-  if (get_hw_rev() >= 0x0a){
-    irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_EDGE_RISING);
-  } else {
-    irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_EDGE_FALLING);
-  }
-#elif defined (CONFIG_USA_MODEL_SGH_I717) || defined(CONFIG_USA_MODEL_SGH_I757) || defined(CONFIG_CAN_MODEL_SGH_I757M)
-
-    irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_EDGE_FALLING);
+		irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_EDGE_FALLING);
 
 #elif defined (CONFIG_USA_MODEL_SGH_T989) || defined (CONFIG_USA_MODEL_SGH_T769)
-  if (get_hw_rev() >= 0x0d){
-    irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_EDGE_RISING);
-  } else {
-    irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_EDGE_FALLING);
-  }
-#elif defined(CONFIG_KOR_MODEL_SHV_E160L)
-  irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_EDGE_FALLING);
+	if (get_hw_rev() >= 0x0d){
+		irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_EDGE_RISING);	
+	} else { 
+		irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_EDGE_FALLING);  
+	}
 #else
-  irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_LEVEL_LOW);
+	irq_set_irq_type(IRQ_TOUCHKEY_INT, IRQ_TYPE_LEVEL_LOW);
 #endif
 }
 
