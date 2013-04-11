@@ -60,7 +60,7 @@ Melfas touchkey register
 #define END_KEY 0x04
 
 #define I2C_M_WR 0		/* for i2c */
-#define DEVICE_NAME "melfas_touchkey"
+#define DEVICE_NAME "sec_touchkey"
 
 
 /*sec_class sysfs*/
@@ -109,7 +109,7 @@ static bool g_debug_switch = false;
 #endif
 
 static const struct i2c_device_id melfas_touchkey_id[] = {
-	{"melfas_touchkey", 0},
+	{"sec_touchkey", 0},
 	{}
 };
 
@@ -128,7 +128,7 @@ static int tkey_led_vdd_enabled = 1;
 
 struct i2c_driver touchkey_i2c_driver = {
 	.driver = {
-		.name = "melfas_touchkey_driver",
+		.name = "sec_touchkey_driver",
 		.owner	= THIS_MODULE,
 	},
 	.id_table = melfas_touchkey_id,
@@ -685,7 +685,7 @@ static int i2c_touchkey_probe(struct i2c_client *client, const struct i2c_device
 
 	touchkey_driver->client = client;
 	touchkey_driver->client->irq = IRQ_TOUCHKEY_INT;
-	strlcpy(touchkey_driver->client->name, "melfas-touchkey", I2C_NAME_SIZE);
+	strlcpy(touchkey_driver->client->name, "sec-touchkey", I2C_NAME_SIZE);
 
 	// i2c_set_clientdata(client, state);
 	input_dev = input_allocate_device();
@@ -696,7 +696,7 @@ static int i2c_touchkey_probe(struct i2c_client *client, const struct i2c_device
 	touchkey_driver->input_dev = input_dev;
 
 	input_dev->name = DEVICE_NAME;
-	input_dev->phys = "melfas-touchkey/input0";
+	input_dev->phys = "sec-touchkey/input0";
 	input_dev->id.bustype = BUS_HOST;
 
 	set_bit(EV_SYN, input_dev->evbit);
@@ -763,20 +763,6 @@ static void init_hw(void)
 		struct pm_gpio cfg;
 	};
 
-#if defined (CONFIG_USA_MODEL_SGH_I727) || defined (CONFIG_USA_MODEL_SGH_T989) || defined (CONFIG_USA_MODEL_SGH_T769)
-
-	struct pm8058_gpio_cfg touchkey_int_cfg = 
-	{
-	  PM8058_GPIO_PM_TO_SYS(12), // id-1		
-		{
-			.direction      = PM_GPIO_DIR_IN,
-			.pull           = PM_GPIO_PULL_NO,//PM_GPIO_PULL_NO,
-			.vin_sel        = 2,
-			.function       = PM_GPIO_FUNC_NORMAL,
-			.inv_int_pol    = 0,
-		},
-	};
-#else
 	struct pm8058_gpio_cfg touchkey_int_cfg = 
 	{
 		13,
@@ -788,7 +774,6 @@ static void init_hw(void)
 			.inv_int_pol	= 0,
 		},
 	};
-#endif
 
 	rc = pm8xxx_gpio_config(touchkey_int_cfg.gpio, &touchkey_int_cfg.cfg);
 	if (rc < 0) {
@@ -846,7 +831,7 @@ struct file_operations touchkey_update_fops = {
 
 static struct miscdevice touchkey_update_device = {
 	.minor = MISC_DYNAMIC_MINOR,
-	.name = "melfas_touchkey",
+	.name = "sec_touchkey",
 	.fops = &touchkey_update_fops,
 };
 
@@ -1228,7 +1213,7 @@ static int __init touchkey_init(void)
 		pr_err("Failed to create device file(%s)!\n", dev_attr_touchkey_brightness.attr.name);
 	}
 
-	touchkey_wq = create_singlethread_workqueue("melfas_touchkey_wq");
+	touchkey_wq = create_singlethread_workqueue("sec_touchkey_wq");
 	if (!touchkey_wq)
 		return -ENOMEM;
 
