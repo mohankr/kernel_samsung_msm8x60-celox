@@ -152,16 +152,29 @@ config CPU_FREQ_DEFAULT_GOV_SMARTASS2
 	help
 		Use the CPUFreq governor 'smartassV2' as default.
 		
-
 config CPU_FREQ_DEFAULT_GOV_WHEATLEY
   bool "wheatley"
   select CPU_FREQ_GOV_WHEATLEY
   select CPU_FREQ_GOV_PERFORMANCE
   help
     Use the CPUFreq governor 'wheatley' as default.
+    
+config CPU_FREQ_DEFAULT_GOV_DANCEDANCE
+  bool "dancedance"
+  select CPU_FREQ_GOV_DANCEDANCE
+  help
+    Use the CPUFreq governor 'dancedance' as default.
 
 endchoice
 
+config CPU_FREQ_GOV_DANCEDANCE
+  tristate "'dancedance' cpufreq governor"
+  depends on CPU_FREQ
+  help
+    A dynamic cpufreq governor for Low Latency Frequency Transition capable 
+    processors optimised for use in a battery environmentModified code based 
+    off conservative with a faster deep sleep rate.
+    
 config CPU_FREQ_GOV_WHEATLEY
   tristate "'wheatley' cpufreq governor"
   depends on CPU_FREQ
