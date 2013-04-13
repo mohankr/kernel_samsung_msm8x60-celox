@@ -236,12 +236,12 @@ static int k3dh_read_accel_xyz(struct k3dh_data *k3dh, struct k3dh_acc *acc)
 	#if defined(CONFIG_USA_MODEL_SGH_T989D)
 		acc->x = -(acc->x);
 		acc->y = acc->y;
-                //acc->z = -(acc->z);
+    acc->z = -(acc->z);
 	#else
-                s16 temp = acc->x;
-                acc->x = -(acc->y);
-                acc->y = (temp);
-                acc->z = (acc->z);	
+    s16 temp = acc->x;
+    acc->x = -(acc->y);
+    acc->y = (temp);
+    acc->z = (acc->z);	
 	#endif
 	}
 #endif

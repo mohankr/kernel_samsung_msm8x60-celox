@@ -2459,6 +2459,12 @@ config PMIC8058_XOADC_CAL
 	  Support PMIC8058 adc calibration
 endif
 
+config SEC_AUDIO_I2S_DRIVING_CURRENT
+       bool "Sec I2S Driving Current"
+       default n
+       help
+         Support I2S driving current up
+
 config Q1_KOR_AUDIO
 	bool "Q1 KOR AUDIO"
 	default n

@@ -1571,7 +1571,8 @@ static int m5mo_set_touch_auto_focus(int val)
 				M5MO_LENS_AF_TOUCH_POSY, m5mo_ctrl->focus.pos_y);
 		CHECK_ERR(err);
 	}
-	else {	
+	else {
+	
 		if (m5mo_ctrl->focus.center) {
 			CAM_DEBUG("center: focus_mode = %d", m5mo_ctrl->focus.mode);
 			if (m5mo_ctrl->focus.mode == FOCUS_MODE_TOUCH_MACRO) {
@@ -1810,6 +1811,7 @@ static void m5mo_init_param(void)
 static int m5mo_start(void) 
 {
 	int err = 0;
+  int count = 0;
 	u32 int_factor;
 
 	CAM_DEBUG("E");
@@ -1817,6 +1819,7 @@ static int m5mo_start(void)
 	m5mo_init_param();
 
 	/* start camera */
+retry :
 	err = m5mo_writeb(M5MO_CATEGORY_FLASH, M5MO_FLASH_CAM_START, 0x01);
 	CHECK_ERR(err);
 
@@ -1824,7 +1827,12 @@ static int m5mo_start(void)
 	
 	if (!(int_factor & M5MO_INT_MODE)) {
 		cam_err("firmware was erased?\n");
-		m5mo_ctrl->isp.bad_fw = 1;
+    if (count == 0){
+        count ++;
+        cam_err (" retry again ");
+        goto retry;
+    }
+ 		m5mo_ctrl->isp.bad_fw = 1;
 		return -ENOSYS;
 	}
 

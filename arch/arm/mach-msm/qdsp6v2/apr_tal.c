@@ -177,7 +177,13 @@ struct apr_svc_ch_dev *apr_tal_open(uint32_t svc, uint32_t dest,
 #if defined(WORKAROUND_FOR_Q6_FAILURE) && defined(CONFIG_SEC_DEBUG)
 			if (!sec_debug_is_enabled()) {
 				kernel_restart(NULL);
-			}
+			} else {
+        /* Adding Panic to know the state of ap and lpass when Q6 failed */
+        //panic("apr_tal:open timeout, q6 failed");
+        /* Kernel panic was added to take logs in case of Q6 failure.
+        Removing panic and applying patch to recover from Q6 failure*/
+        kernel_restart(NULL);
+      }
 #endif
 			return NULL;
 		}

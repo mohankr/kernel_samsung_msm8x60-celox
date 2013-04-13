@@ -4860,7 +4860,7 @@ static void fsa9480_mhl_cb(bool attached)
 	printk(KERN_ERR "fsa9480_mhl_cb attached %d\n", attached);
 	
 	device_attached = attached ? DEV_TYPE_MHL : DEV_TYPE_NONE;
-	set_cable_status = attached ? CABLE_TYPE_MISC : CABLE_TYPE_NONE;
+	set_cable_status = attached ? CABLE_TYPE_USB : CABLE_TYPE_NONE;
 
 #ifdef CONFIG_BATTERY_SEC
 	switch(set_cable_status) {
@@ -11545,7 +11545,57 @@ static void msm_timpani_shutdown_power(void)
 
 	regulator_put(vreg_timpani_2);
 }
+/* Qualcomm i2c patch begins */
 
+
+
+static unsigned int msm_timpani_reset(void)
+{
+  int rc;
+
+  rc = regulator_is_enabled(vreg_timpani_1);
+  if (rc <= 0) {
+    rc = regulator_set_voltage(vreg_timpani_1, 1200000, 1200000);
+    if (rc) {
+      pr_err("%s: unable to set L0 voltage to 1.2V\n",
+                __func__);
+      return rc;
+    }
+    rc = regulator_enable(vreg_timpani_1);
+    if (rc) {
+      pr_err("%s: Enable regulator 8058_l0 failed\n",
+                __func__);
+      return rc;
+    }
+  }
+
+  rc = regulator_is_enabled(vreg_timpani_2);
+  if (rc <= 0) {
+    rc = regulator_set_voltage(vreg_timpani_2, 1800000, 1800000);
+    if (rc) {
+      pr_err("%s: unable to set s3 voltage to 1.8V\n",
+                __func__);
+      goto fail;
+    }
+    rc = regulator_enable(vreg_timpani_2);
+    if (rc) {
+      pr_err("%s: Enable regulator 8058_s3 failed\n",
+                __func__);
+      goto fail;
+    }
+  }
+
+  gpio_direction_output(GPIO_CDC_RST_N, 0);
+  usleep_range(1000, 1050);
+  gpio_direction_output(GPIO_CDC_RST_N, 1);
+  usleep_range(1000, 1050);
+
+  return 0;
+fail:
+  return rc;
+}
+
+/* qualcomm patch end */
 /* Power analog function of codec */
 static struct regulator *vreg_timpani_cdc_apwr;
 static int msm_timpani_codec_power(int vreg_on)
@@ -11636,6 +11686,7 @@ static struct marimba_platform_data timpani_pdata = {
 	.slave_id[MARIMBA_SLAVE_ID_QMEMBIST] = TIMPANI_SLAVE_ID_QMEMBIST_ADDR,
 	.marimba_setup = msm_timpani_setup_power,
 	.marimba_shutdown = msm_timpani_shutdown_power,
+  .timpani_reset_config = msm_timpani_reset,
 	.codec = &timpani_codec_pdata,
 	.tsadc_ssbi_adap = MARIMBA_SSBI_ADAP,
 };

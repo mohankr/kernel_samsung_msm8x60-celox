@@ -1022,10 +1022,20 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
 			}
 #ifndef CONFIG_MHL_D3_SUPPORT
 			if (mhl_ret != MHL_DEVICE) {
-				FSA9480_CheckAndHookAudioDock(USE_DESK_DOCK, 1);
-				isDeskdockconnected = 1;
-				Dockconnected = 1;
-			}
+      #if defined(CONFIG_USA_MODEL_SGH_I757)
+        if ((adc & 0x1F) == 0x1A) {
+          pr_info("FSA Deskdock Attach\n");
+          FSA9480_CheckAndHookAudioDock(USE_DESK_DOCK, 1);
+          isDeskdockconnected = 1;
+          Dockconnected = 1;
+        }
+      #else
+
+        pr_info("FSA Deskdock Attach\n");
+        FSA9480_CheckAndHookAudioDock(USE_DESK_DOCK, 1);
+        isDeskdockconnected = 1;
+        Dockconnected = 1;
+      #endif
 #endif
 			EnableFSA9480Interrupts();
 #else
@@ -1137,6 +1147,8 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
 			printk(KERN_DEBUG "FSA MHL Detach\n");
 			FSA9480_MhlSwitchSel(0);
 #elif defined(CONFIG_VIDEO_MHL_V2)
+      i2c_smbus_write_byte_data(client,
+                                  FSA9480_REG_RESERVED_1D, 0x04);
 			if (isDeskdockconnected)
 				FSA9480_CheckAndHookAudioDock(USE_DESK_DOCK, 0);
 			isDeskdockconnected = 0;

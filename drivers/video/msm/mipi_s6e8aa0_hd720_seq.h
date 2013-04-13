@@ -459,22 +459,21 @@ static struct dsi_cmd_desc_LCD lcd_acl_55p_table[MAX_GAMMA_VALUE+1] = {
 static char ACL_ManualF_COND_SET_20p[] = { ACL_ManualF_COND_HEADER, 0x01, 0x04, 0x07, 0x0A, 0x0D, 0x10, 0x12, 0x15, 0x18, 0x1B, 0x1E };
 static char ACL_ManualF_COND_SET_33p[] = { ACL_ManualF_COND_HEADER, 0x01, 0x06, 0x0A, 0x0F, 0x14, 0x19, 0x1D, 0x22, 0x27, 0x2B, 0x30 };
 static char ACL_ManualF_COND_SET_50p[] = { ACL_ManualF_COND_HEADER, 0x01, 0x09, 0x10, 0x18, 0x1F, 0x27, 0x2E, 0x36, 0x3D, 0x45, 0x4C };
-//static char ACL_ManualF_COND_SET_48p[] = { ACL_ManualF_COND_HEADER, 0x01, 0x08, 0x0F, 0x17, 0x1E, 0x25, 0x2C, 0x33, 0x3B, 0x42, 0x49 };
-//static char ACL_ManualF_COND_SET_47p[] = { ACL_ManualF_COND_HEADER, 0x01, 0x08, 0x0F, 0x15, 0x1C, 0x23, 0x2A, 0x31, 0x37, 0x3E, 0x45 };
-//static char ACL_ManualF_COND_SET_45p[] = { ACL_ManualF_COND_HEADER, 0x01, 0x07, 0x0E, 0x14, 0x1B, 0x21, 0x27, 0x2E, 0x34, 0x3B, 0x41 };
-//static char ACL_ManualF_COND_SET_43p[] = { ACL_ManualF_COND_HEADER, 0x01, 0x07, 0x0D, 0x14, 0x1A, 0x20, 0x26, 0x2C, 0x33, 0x39, 0x3F };
+static char ACL_ManualF_COND_SET_48p[] = { ACL_ManualF_COND_HEADER, 0x01, 0x08, 0x0F, 0x17, 0x1E, 0x25, 0x2C, 0x33, 0x3B, 0x42, 0x49 };
+static char ACL_ManualF_COND_SET_47p[] = { ACL_ManualF_COND_HEADER, 0x01, 0x08, 0x0F, 0x15, 0x1C, 0x23, 0x2A, 0x31, 0x37, 0x3E, 0x45 };
+static char ACL_ManualF_COND_SET_45p[] = { ACL_ManualF_COND_HEADER, 0x01, 0x07, 0x0E, 0x14, 0x1B, 0x21, 0x27, 0x2E, 0x34, 0x3B, 0x41 };
+static char ACL_ManualF_COND_SET_43p[] = { ACL_ManualF_COND_HEADER, 0x01, 0x07, 0x0D, 0x14, 0x1A, 0x20, 0x26, 0x2C, 0x33, 0x39, 0x3F };
 static char ACL_ManualF_COND_SET_40p[] = { ACL_ManualF_COND_HEADER, 0x01, 0x07, 0x0D, 0x12, 0x18, 0x1E, 0x24, 0x2A, 0x2F, 0x35, 0x3B };
-
 //static struct dsi_cmd_desc DSI_CMD_ACL_ManualF_55p= {DTYPE_DCS_LWRITE, 1, 0, 0, 0, sizeof(ACL_ManualF_COND_SET_55p), ACL_ManualF_COND_SET_55p};
 //static struct dsi_cmd_desc DSI_CMD_ACL_ManualF_53p= {DTYPE_DCS_LWRITE, 1, 0, 0, 0, sizeof(ACL_ManualF_COND_SET_53p), ACL_ManualF_COND_SET_53p};
 //static struct dsi_cmd_desc DSI_CMD_ACL_ManualF_52p= {DTYPE_DCS_LWRITE, 1, 0, 0, 0, sizeof(ACL_ManualF_COND_SET_52p), ACL_ManualF_COND_SET_52p};
 static struct dsi_cmd_desc DSI_CMD_ACL_ManualF_20p= {DTYPE_DCS_LWRITE, 1, 0, 0, 0, sizeof(ACL_ManualF_COND_SET_20p), ACL_ManualF_COND_SET_20p};
 static struct dsi_cmd_desc DSI_CMD_ACL_ManualF_33p= {DTYPE_DCS_LWRITE, 1, 0, 0, 0, sizeof(ACL_ManualF_COND_SET_33p), ACL_ManualF_COND_SET_33p};
 static struct dsi_cmd_desc DSI_CMD_ACL_ManualF_50p= {DTYPE_DCS_LWRITE, 1, 0, 0, 0, sizeof(ACL_ManualF_COND_SET_50p), ACL_ManualF_COND_SET_50p};
-//static struct dsi_cmd_desc DSI_CMD_ACL_ManualF_48p= {DTYPE_DCS_LWRITE, 1, 0, 0, 0, sizeof(ACL_ManualF_COND_SET_48p), ACL_ManualF_COND_SET_48p};
-//static struct dsi_cmd_desc DSI_CMD_ACL_ManualF_47p= {DTYPE_DCS_LWRITE, 1, 0, 0, 0, sizeof(ACL_ManualF_COND_SET_47p), ACL_ManualF_COND_SET_47p};
-//static struct dsi_cmd_desc DSI_CMD_ACL_ManualF_45p= {DTYPE_DCS_LWRITE, 1, 0, 0, 0, sizeof(ACL_ManualF_COND_SET_45p), ACL_ManualF_COND_SET_45p};
-//static struct dsi_cmd_desc DSI_CMD_ACL_ManualF_43p= {DTYPE_DCS_LWRITE, 1, 0, 0, 0, sizeof(ACL_ManualF_COND_SET_45p), ACL_ManualF_COND_SET_43p};
+static struct dsi_cmd_desc DSI_CMD_ACL_ManualF_48p= {DTYPE_DCS_LWRITE, 1, 0, 0, 0, sizeof(ACL_ManualF_COND_SET_48p), ACL_ManualF_COND_SET_48p};
+static struct dsi_cmd_desc DSI_CMD_ACL_ManualF_47p= {DTYPE_DCS_LWRITE, 1, 0, 0, 0, sizeof(ACL_ManualF_COND_SET_47p), ACL_ManualF_COND_SET_47p};
+static struct dsi_cmd_desc DSI_CMD_ACL_ManualF_45p= {DTYPE_DCS_LWRITE, 1, 0, 0, 0, sizeof(ACL_ManualF_COND_SET_45p), ACL_ManualF_COND_SET_45p};
+static struct dsi_cmd_desc DSI_CMD_ACL_ManualF_43p= {DTYPE_DCS_LWRITE, 1, 0, 0, 0, sizeof(ACL_ManualF_COND_SET_45p), ACL_ManualF_COND_SET_43p};
 static struct dsi_cmd_desc DSI_CMD_ACL_ManualF_40p= {DTYPE_DCS_LWRITE, 1, 0, 0, 0, sizeof(ACL_ManualF_COND_SET_40p), ACL_ManualF_COND_SET_40p};
 
 #if 0 // Manual-H

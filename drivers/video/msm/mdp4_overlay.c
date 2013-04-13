@@ -1928,7 +1928,7 @@ void mdp4_mixer_blend_setup(int mixer)
 	struct mdp4_overlay_pipe *s_pipe;	
 	struct mdp4_overlay_perf *perf_cur = &perf_current;
 	struct blend_cfg *blend;
-	int i, off, alpha_drop = 0;
+  int i, off, ptype, alpha_drop = 0;
 	int d_alpha, s_alpha;
 	unsigned char *overlay_base;
 	uint32 c0, c1, c2, base_premulti;
@@ -1975,6 +1975,8 @@ void mdp4_mixer_blend_setup(int mixer)
 		blend->bg_alpha = 0x0ff - s_pipe->alpha;
 		blend->fg_alpha = s_pipe->alpha;
 		blend->co3_sel = 1; /* use fg alpha */
+    pr_debug("%s: bg alpha %d, fg alpha %d\n",
+            __func__, blend->bg_alpha, blend->fg_alpha);
 
 		if (s_pipe->is_fg) {
 			if (s_pipe->alpha == 0xff) {
@@ -1991,21 +1993,29 @@ void mdp4_mixer_blend_setup(int mixer)
 						MDP4_BLEND_FG_ALPHA_FG_PIXEL;
 				else
 					blend->fg_alpha = 0xff;
-				blend->op |= MDP4_BLEND_BG_INV_ALPHA;
 			} else
 				blend->op = MDP4_BLEND_BG_ALPHA_FG_CONST;
+        blend->op |= MDP4_BLEND_BG_INV_ALPHA;
 		} else if (d_alpha) {
+      ptype = mdp4_overlay_format2type(s_pipe->src_format);
+      if (ptype == OVERLAY_TYPE_VIDEO) {
 				blend->op = (MDP4_BLEND_FG_ALPHA_BG_PIXEL |
 					MDP4_BLEND_FG_INV_ALPHA);
-			if ((!(d_pipe->flags & MDP_BLEND_FG_PREMULT)) &&
-						((i != MDP4_MIXER_STAGE0) ||
-							(!base_premulti)))
-					blend->op |=
-						MDP4_BLEND_BG_ALPHA_BG_PIXEL;
-				else
-					blend->fg_alpha = 0xff;
-						
-				blend->co3_sel = 0; /* use bg alpha */
+        if ((!(s_pipe->flags & MDP_BLEND_FG_PREMULT)) &&
+              ((i != MDP4_MIXER_STAGE0) ||
+                (!base_premulti)))
+            blend->op |=
+              MDP4_BLEND_BG_ALPHA_BG_PIXEL;
+          else
+            blend->fg_alpha = 0xff;
+              
+          blend->co3_sel = 0; /* use bg alpha */
+      } else {
+              /* s_pipe is rgb without alpha */
+              blend->op = (MDP4_BLEND_FG_ALPHA_FG_CONST |
+                          MDP4_BLEND_BG_ALPHA_BG_CONST);
+              blend->bg_alpha = 0;
+      }
 		}
 
 		if (mdp_rev < MDP_REV_42 && mixer == MDP4_MIXER1 &&

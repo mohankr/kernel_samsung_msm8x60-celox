@@ -135,8 +135,10 @@
 static bool gbfilter;
 #endif
 
-#if defined (CONFIG_USA_MODEL_SGH_I577) || defined(CONFIG_CAN_MODEL_SGH_I577R) || defined (CONFIG_USA_MODEL_SGH_I727)|| defined (CONFIG_USA_MODEL_SGH_T989)
+#if defined (CONFIG_USA_MODEL_SGH_I577) || defined(CONFIG_CAN_MODEL_SGH_I577R) || defined (CONFIG_USA_MODEL_SGH_T989)
 #define MXT_REG_VERSION "1021"
+#elif defined (CONFIG_USA_MODEL_SGH_I727)
+#define MXT_REG_VERSION "I9210_At_0220"
 #endif
 
 struct object_t {
